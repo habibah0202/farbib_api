@@ -21,6 +21,23 @@ class NilaiController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | Response JSON
+    |--------------------------------------------------------------------------
+    */
+
+    private function jsonResponse($data, $status = 200)
+    {
+        return response()->json(
+            $data,
+            $status,
+            [],
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | Membaca data dari JSON
     |--------------------------------------------------------------------------
     */
@@ -29,7 +46,6 @@ class NilaiController extends Controller
     {
         $file = $this->filePath();
 
-        // Jika file belum ada, buat file kosong
         if (!File::exists($file)) {
             File::put($file, json_encode([]));
         }
@@ -74,7 +90,7 @@ class NilaiController extends Controller
     {
         $data = $this->getData();
 
-        return response()->json([
+        return $this->jsonResponse([
             'status' => 'success',
             'total' => count($data),
             'data' => $data
@@ -96,14 +112,14 @@ class NilaiController extends Controller
 
             if ((int) $item['id'] === (int) $id) {
 
-                return response()->json([
+                return $this->jsonResponse([
                     'status' => 'success',
                     'data' => $item
                 ]);
             }
         }
 
-        return response()->json([
+        return $this->jsonResponse([
             'status' => 'error',
             'pesan' => 'Data tidak ditemukan'
         ], 404);
@@ -199,7 +215,7 @@ class NilaiController extends Controller
         | Response POST
         */
 
-        return response()->json([
+        return $this->jsonResponse([
             'status' => 'success',
             'pesan' => 'Data berhasil ditambahkan',
             'data' => $dataBaru
@@ -313,7 +329,7 @@ class NilaiController extends Controller
 
         if (!$ditemukan) {
 
-            return response()->json([
+            return $this->jsonResponse([
                 'status' => 'error',
                 'pesan' => 'Data tidak ditemukan'
             ], 404);
@@ -328,10 +344,10 @@ class NilaiController extends Controller
 
 
         /*
-        | Response
+        | Response PUT/PATCH
         */
 
-        return response()->json([
+        return $this->jsonResponse([
             'status' => 'success',
             'pesan' => 'Data berhasil diperbarui',
             'data' => $dataUpdate
@@ -373,7 +389,7 @@ class NilaiController extends Controller
 
         if (!$ditemukan) {
 
-            return response()->json([
+            return $this->jsonResponse([
                 'status' => 'error',
                 'pesan' => 'Data tidak ditemukan'
             ], 404);
@@ -387,7 +403,7 @@ class NilaiController extends Controller
         $this->saveData($dataBaru);
 
 
-        return response()->json([
+        return $this->jsonResponse([
             'status' => 'success',
             'pesan' => 'Data berhasil dihapus'
         ]);
